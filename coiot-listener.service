@@ -1,0 +1,10 @@
+[Unit]
+Description=Symfony messenger-consume %i
+
+[Service]
+ExecStart=php /usr/bin/php /var/www/html/shellyListener/bin/console coiot:listen
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target
