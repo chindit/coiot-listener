@@ -10,7 +10,9 @@ This small script allows you to easily listen for incoming CoIoT pushes from you
 For example, if you are running this script on 192.168.1.1, Go to http://ip.of.your.shelly, then _Internet and Security_ > 
 _Advanced - Developer Settings_ and change _CoIoT peer_ to your IP (so, 192.168.1.1)
 4. See pushes flowing through your CLI ^^ 
-5. Mapping of info can be done base on http://ip.of.your.shelly/cit/d
+5. Mapping of info can be done automatically by running `php bin/console generate:description`.
+It's recommended to run this command in «append» mode for every device type you have. By default, some codes are already present but **I cannot guarantee they are the same for you**.
+If you are having any king of issues, run the commande in «override» mode.
 
 ### Run as a daemon
 
