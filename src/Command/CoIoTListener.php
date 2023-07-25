@@ -29,6 +29,9 @@ class CoIoTListener extends Command {
             if ($type === Process::ERR) {
                 $io->error($buffer);
             } else {
+                if (json_validate($buffer)) {
+                    $io->warning('DETECTED - RPC' . $buffer);
+                }
                 $utf8String = mb_convert_encoding($buffer, 'UTF-8', 'ASCII');
                 $pattern = '/(#(.*)#).*({.*})/';
                 preg_match($pattern, $utf8String, $matches);
