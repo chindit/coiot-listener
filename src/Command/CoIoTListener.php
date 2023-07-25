@@ -39,7 +39,7 @@ class CoIoTListener extends Command {
 
                     $payload = json_decode($jsonString, true);
                     $statuses = [];
-                    array_walk($payload, function(array $item) use (&$statuses) {
+                    array_walk($payload['G'], function(array $item) use (&$statuses) {
                         $value = ShellyCodes::tryFrom($item[1]);
                         if ($value) {
                             $statuses[$value->name] = $item[2];
@@ -47,8 +47,9 @@ class CoIoTListener extends Command {
                     });
 
                     $this->dispatcher->dispatch(new StatusUpdateEvent(new ShellyStatus($deviceID, $statuses)));
+                } else {
+                    $io->warning('Unable to fetch data from response.  Received string is : ' . $utf8String);
                 }
-                $io->warning('Unable to fetch data from response.  Received string is : ' . $utf8String);
             }
         });
 
