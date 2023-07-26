@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Shelly;
 use App\Enums\ShellyCodes;
 use App\Event\StatusUpdateEvent;
+use App\Event\StatusUpdateRpcEvent;
 use App\Model\ShellyStatus;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -97,6 +98,8 @@ class CoIoTListener extends Command {
                     'humidity' => $payload->params->{'humidity:0'}->rh,
                     'temperature' => $payload->params->{'temperature:0'}->tC
                 ]);
+
+            $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus));
         }
     }
 }
