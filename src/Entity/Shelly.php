@@ -8,11 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ShellyRepository::class)]
 class Shelly
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\Column(length: 10)]
     private ?string $type = null;
 
@@ -28,17 +23,16 @@ class Shelly
     #[ORM\Column]
     private ?int $total = null;
 
+    #[ORM\Id]
     #[ORM\Column]
-    private ?int $time = null;
+    private string $time;
 
     #[ORM\Column]
     private array $data = [];
 
-    public function getId(): ?int
-    {
-        return $this->id;
+    public function __construct() {
+        $this->time = (new \DateTime())->format('Y-m-d H:i:s.u');
     }
-
     public function getType(): ?string
     {
         return $this->type;
