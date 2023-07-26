@@ -66,8 +66,7 @@ class CoIoTListener extends Command {
                     $statuses[$value->name] = $item[2];
                 }
             });
-
-            $this->dispatcher->dispatch(new StatusUpdateEvent(new ShellyStatus($deviceID, $statuses)));
+            $this->dispatcher->dispatch(new StatusUpdateEvent(new ShellyStatus($deviceID, $statuses)), StatusUpdateEvent::NAME);
         } else {
             $this->io->warning('Unable to fetch data from response.  Received string is : ' . $utf8String);
         }
@@ -99,7 +98,7 @@ class CoIoTListener extends Command {
                     'temperature' => $payload->params->{'temperature:0'}->tC
                 ]);
 
-            $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus));
+            $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus), StatusUpdateRpcEvent::NAME);
         }
     }
 }

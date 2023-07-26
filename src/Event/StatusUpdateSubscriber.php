@@ -2,6 +2,8 @@
 
 namespace App\Event;
 
+use App\Entity\Shelly;
+use App\Enums\ShellyCodes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,7 +23,14 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
 
     public function onUpdate(StatusUpdateEvent $event):void
     {
-        dump($event);
+        $shellyEvent = (new Shelly())
+            ->setDeviceId($event->status->deviceId)
+            ->setType('plug')
+            ->setPower($event->status->statuses[ShellyCodes::power_W->name])
+            ->setTemperature($event->status->statuses[ShellyCodes::deviceTemp_C->name])
+            ->setTotal($event->status->statuses[ShellyCodes::energy_Wmin->name]);
+        $this->entityManager->persist($shellyEvent);
+        $this->entityManager->flush();
     }
 
     public function onRpcUpdate(StatusUpdateRpcEvent $event): void
