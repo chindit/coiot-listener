@@ -15,13 +15,13 @@ class Shelly
     private ?string $device_id = null;
 
     #[ORM\Column]
-    private ?float $power = null;
+    private float $power = 0.0;
 
     #[ORM\Column]
-    private ?float $temperature = null;
+    private float $temperature = 0.0;
 
     #[ORM\Column]
-    private ?int $total = null;
+    private int $total = 0;
 
     #[ORM\Id]
     #[ORM\Column]
@@ -57,7 +57,7 @@ class Shelly
         return $this;
     }
 
-    public function getPower(): ?float
+    public function getPower(): float
     {
         return $this->power;
     }
@@ -69,7 +69,7 @@ class Shelly
         return $this;
     }
 
-    public function getTemperature(): ?float
+    public function getTemperature(): float
     {
         return $this->temperature;
     }
@@ -81,7 +81,7 @@ class Shelly
         return $this;
     }
 
-    public function getTotal(): ?int
+    public function getTotal(): int
     {
         return $this->total;
     }
