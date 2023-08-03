@@ -29,7 +29,7 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
                 ->setDeviceId($event->status->deviceId)
                 ->setType('plug')
                 ->setPower($event->status->statuses[ShellyCodes::power_W->name])
-                ->setTemperature($event->status->statuses[ShellyCodes::deviceTemp_C->name])
+                ->setTemperature($event->status->statuses?->{ShellyCodes::deviceTemp_C->name} ?? 0.0)
                 ->setTotal($event->status->statuses[ShellyCodes::energy_Wmin->name]);
             $this->entityManager->persist($shellyEvent);
             $this->entityManager->flush();
