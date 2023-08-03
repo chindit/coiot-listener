@@ -7,6 +7,7 @@ use App\Enums\ShellyCodes;
 use App\Event\StatusUpdateEvent;
 use App\Event\StatusUpdateRpcEvent;
 use App\Model\ShellyStatus;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +19,7 @@ use Symfony\Component\Process\Process;
 #[AsCommand(name:'coiot:listen')]
 class CoIoTListener extends Command {
     private SymfonyStyle $io;
-    public function __construct(private readonly EventDispatcherInterface $dispatcher)
+    public function __construct(private readonly EventDispatcherInterface $dispatcher, private readonly LoggerInterface $logger)
     {
         parent::__construct();
     }
@@ -32,6 +33,7 @@ class CoIoTListener extends Command {
             if ($type === Process::ERR) {
                 $this->io->error($buffer);
             } else {
+                $this->logger->debug(sprintf('Received message: %s', $buffer));
                 /**
                  * Some new Shelly devices cannot send via CoIoT but via RPC over UDP
                  * CoIoT and RPC are caught in this command, but we need to differentiate them.
