@@ -53,7 +53,7 @@ class CoIoTListener extends Command {
     private function parseCoIoT(string $input): void
     {
         $utf8String = mb_convert_encoding($input, 'UTF-8', 'ASCII');
-        $pattern = '/(#(.*)#).*({.*})/';
+        $pattern = '/\\t.*(#(.*)#).*({.*})/';
         preg_match($pattern, $utf8String, $matches);
 
         if (count($matches) === 4) {
