@@ -62,7 +62,7 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
             "precision" => WritePrecision::S
         ]);
         $client->createWriteApi()
-            ->write(sprintf('plug,device_id=%ts power=%f,temperature=%f,total=%i',
+            ->write(sprintf('plug,device_id=%s power=%f,temperature=%f,total=%i',
             $shelly->getDeviceId(),
             $shelly->getPower(),
             $shelly->getTemperature(),
