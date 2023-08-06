@@ -41,6 +41,7 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
                 ->setTotal($event->status->statuses[ShellyCodes::energy_Wmin->name]);
             $this->saveToInflux($shellyEvent);
         } catch (\Throwable $t) {
+            $this->logger->error($t);
             $this->logger->error(sprintf('Unable to save Shelly event.  Received error is: %s', $t->getMessage()), context: ['id' => $event->status->deviceId, 'statuses' => $event->status->statuses]);
         }
     }
