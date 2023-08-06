@@ -12,6 +12,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $fileLocation: '%kernel.project_dir%'
+            $influxToken: '%env(INFLUXDB_TOKEN)%'
+            $influxBucket: '%env(INFLUX_BUCKET)%'
+            $influxOrg: '%env(INFLUX_ORG)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -10,6 +10,7 @@
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",
+        "influxdata/influxdb-client-php": "^3.4",
         "symfony/console": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/event-dispatcher": "6.3.*",
