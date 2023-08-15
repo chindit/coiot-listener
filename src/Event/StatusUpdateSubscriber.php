@@ -70,4 +70,9 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
         }
         $client->close();
     }
+
+    public function onRpcUpdate(Shelly $shelly): void
+    {
+        $this->saveToInflux($shelly);
+    }
 }
