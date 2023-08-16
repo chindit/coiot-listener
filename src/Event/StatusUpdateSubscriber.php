@@ -4,13 +4,19 @@ namespace App\Event;
 
 use App\Entity\Shelly;
 use App\Enums\ShellyCodes;
-use Doctrine\ORM\EntityManagerInterface;
+use InfluxDB2\Client;
+use InfluxDB2\Model\WritePrecision;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class StatusUpdateSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly LoggerInterface $logger){}
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly string $influxToken,
+        private readonly string $influxBucket,
+        private readonly string $influxOrg
+    ){}
     /**
      * @inheritDoc
      */
@@ -31,16 +37,42 @@ class StatusUpdateSubscriber implements EventSubscriberInterface
                 ->setPower($event->status->statuses[ShellyCodes::power_W->name])
                 ->setTemperature($event->status->statuses?->{ShellyCodes::deviceTemp_C->name} ?? 0.0)
                 ->setTotal($event->status->statuses[ShellyCodes::energy_Wmin->name]);
-            $this->entityManager->persist($shellyEvent);
-            $this->entityManager->flush();
+            $this->saveToInflux($shellyEvent);
         } catch (\Throwable $t) {
+            $this->logger->error($t);
             $this->logger->error(sprintf('Unable to save Shelly event.  Received error is: %s', $t->getMessage()), context: ['id' => $event->status->deviceId, 'statuses' => $event->status->statuses]);
         }
     }
 
-    public function onRpcUpdate(StatusUpdateRpcEvent $event): void
+    private function saveToInflux(Shelly $shelly): void
     {
-        $this->entityManager->persist($event->shelly);
-        $this->entityManager->flush();
+        $client = new Client([
+            "url" => "http://localhost:8086",
+            "token" => $this->influxToken,
+            "bucket" => $this->influxBucket,
+            "org" => $this->influxOrg,
+            "precision" => WritePrecision::S
+        ]);
+        if ($shelly->getType() === 'plug') {
+            $client->createWriteApi()
+                ->write(sprintf('plug,device_id=%s power=%f,temperature=%f,total=%u',
+                    $shelly->getDeviceId(),
+                    $shelly->getPower(),
+                    $shelly->getTemperature(),
+                    $shelly->getTotal()));
+        } else {
+            $client->createWriteApi()
+                ->write(sprintf('sensor,device_id=%s temperature=%f,humidity=%f,battery=%f',
+                    $shelly->getDeviceId(),
+                    $shelly->getData()['temperature'],
+                    $shelly->getData()['humidity'],
+                    $shelly->getData()['battery']['percent']));
+        }
+        $client->close();
+    }
+
+    public function onRpcUpdate(Shelly $shelly): void
+    {
+        $this->saveToInflux($shelly);
     }
 }
