@@ -33,7 +33,6 @@ class CoIoTListener extends Command {
             if ($type === Process::ERR) {
                 $this->io->error($buffer);
             } else {
-                $this->logger->debug(sprintf('Received message: %s', $buffer));
                 /**
                  * Some new Shelly devices cannot send via CoIoT but via RPC over UDP
                  * CoIoT and RPC are caught in this command, but we need to differentiate them.
@@ -102,5 +101,7 @@ class CoIoTListener extends Command {
 
             $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus), StatusUpdateRpcEvent::NAME);
         }
+
+        $this->logger->debug('Received RPC message: ' . $input);
     }
 }
