@@ -33,15 +33,19 @@ class CoIoTListener extends Command {
             if ($type === Process::ERR) {
                 $this->io->error($buffer);
             } else {
-                /**
-                 * Some new Shelly devices cannot send via CoIoT but via RPC over UDP
-                 * CoIoT and RPC are caught in this command, but we need to differentiate them.
-                 * RPC payload are 100% JSON compliant with no extra data
-                 */
-                if (json_validate($buffer)) {
-                    $this->parseRpc($buffer);
-                } else {
-                    $this->parseCoIoT($buffer);
+                try {
+                    /**
+                     * Some new Shelly devices cannot send via CoIoT but via RPC over UDP
+                     * CoIoT and RPC are caught in this command, but we need to differentiate them.
+                     * RPC payload are 100% JSON compliant with no extra data
+                     */
+                    if (json_validate($buffer)) {
+                        $this->parseRpc($buffer);
+                    } else {
+                        $this->parseCoIoT($buffer);
+                    }
+                } catch (\Throwable $t) {
+                    $this->logger->error('Unable to parse log.  Received input is : ' . $buffer, ['error' => $t]);
                 }
             }
         });
