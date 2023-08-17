@@ -104,6 +104,15 @@ class CoIoTListener extends Command {
                 ]);
 
             $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus), StatusUpdateRpcEvent::NAME);
+        } elseif ($payload?->method === 'NotifyStatus' && $payload?->method?->params?->switch?->current) {
+
+            $shellyStatus = (new Shelly())
+                ->setDeviceId(explode('-', $payload->src)[1])
+                ->setType('plug')
+                ->setPower($payload?->method?->params?->switch?->current)
+                ->setTemperature(0.0);
+
+            $this->dispatcher->dispatch(new StatusUpdateRpcEvent($shellyStatus), StatusUpdateRpcEvent::NAME);
         }
 
         $this->logger->debug('Received RPC message: ' . $input);
